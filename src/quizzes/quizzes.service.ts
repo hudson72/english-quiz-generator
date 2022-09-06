@@ -1,6 +1,6 @@
 import {HttpException, Inject, Injectable} from '@nestjs/common';
 import {
-    AddNewQuizResponse,
+    AddNewQuizResponse, AllQuizzesByUser,
     DeleteQuizResponse, GetAllQuizzesByUserResponse,
     GetAllQuizzesResponse, GetOneQuizResponse, UpdatedQuizResponse,
 } from "../interfaces/quizzes";
@@ -35,22 +35,13 @@ export class QuizzesService {
      quiz.totalQuestions = newQuiz.totalQuestions;
 
      if (newQuiz.quizName === 'undefined' || typeof newQuiz.quizName !== 'string') {
-         return {
-             isSuccessful: false,
-             message: `Please provide a 'quizName'!. It must be a string!`
-         }
+         throw new HttpException(`Please provide a 'quizName'! It must be a string!`, 400);
      } else if (newQuiz.totalQuestions <= 0 || typeof newQuiz.totalQuestions !== 'number' ) {
-         return {
-             isSuccessful: false,
-             message: `Please provide a 'totalQuestions'! It must be a number greater than 0!`
-         }
+         throw new HttpException(`Please provide a 'totalQuestions'! It must be a number greater than 0!`, 400);
      }
 
         if (await Quizzes.findOne({where: {quizName: newQuiz.quizName}})) {
-            return {
-                isSuccessful: false,
-                message: `Sorry, quizName: '${newQuiz.quizName}' already exists! Please provide a new quizName.`,
-            }
+            throw new HttpException(`Sorry, quizName: '${newQuiz.quizName}' already exists! Please provide a new quizName.`, 400);
         } else {
             quiz.users = user;
             await quiz.save();
@@ -67,18 +58,27 @@ export class QuizzesService {
         }
     }
 
-    async getAllQuizzesByUser(id: string): Promise<GetAllQuizzesByUserResponse> {
+    async getAllQuizzesByUser(id: string): Promise<AllQuizzesByUser> {
         if (!await Users.findOne({where: {id}})) {
-            return {
-                isSuccessful: false,
-                message: `User with ID: '${id}' doesn't exist!`
-            }
+            throw new HttpException(`User with ID: '${id}' doesn't exist!`, 404);
         }
-        return await this.dataSource
+
+        const totalQuizzes = await this.dataSource
             .createQueryBuilder(Quizzes, 'quizzes')
             .leftJoin('quizzes.users', 'users')
             .where('users.id = :usersId', {usersId: id})
-            .execute()
+            .getCount()
+
+        const quizzesByUser = await this.dataSource
+            .createQueryBuilder(Quizzes, 'quizzes')
+            .leftJoin('quizzes.users', 'users')
+            .where('users.id = :usersId', {usersId: id})
+            .getMany()
+
+        return {
+            quizzesByUser,
+            totalQuizzes,
+        }
     }
 
     async delete(id: number): Promise<DeleteQuizResponse> {
@@ -90,24 +90,15 @@ export class QuizzesService {
                 message: `Quiz with ID: '${id}' has been deleted.`,
             }
         } else {
-            return {
-                isSuccessful: false,
-                message: `Sorry, quiz with ID: '${id}' doesn't exist!`
-            }
+            throw new HttpException(`Sorry, quiz with ID: '${id}' doesn't exist!`, 404);
         }
     }
         async update(id: number, totalQuestions: number): Promise<UpdatedQuizResponse> {
             const quizToUpdate = await Quizzes.findOne({where: {id}});
             if (!quizToUpdate) {
-                return {
-                    isSuccessful: false,
-                    message: `Sorry, quiz with ID: '${id}' doesn't exist.`
-                }
+                throw new HttpException(`Sorry, quiz with ID: '${id}' doesn't exist!`, 404);
             } else if (totalQuestions === quizToUpdate.totalQuestions) {
-                return {
-                    isSuccessful: false,
-                    message: `The given 'totalQuestions' and the existing one are the same: '${totalQuestions}'!`,
-                }
+                throw new HttpException(`Sorry, the given 'totalQuestions' and the existing one are the same: '${totalQuestions}'!`, 400);
             } else {
                 await Quizzes.update(id, {totalQuestions});
             }

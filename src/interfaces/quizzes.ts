@@ -7,7 +7,11 @@ export interface SingleQuizByUser {
     id: number;
     quizName: string;
     totalQuestions: number;
-    usersId: string;
+}
+
+export interface AllQuizzesByUser {
+    quizzesByUser: SingleQuizByUser[];
+    totalQuizzes: number;
 }
 
 export type GetAllQuizzesByUserResponse = SingleQuizByUser[] | {

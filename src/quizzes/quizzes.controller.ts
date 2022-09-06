@@ -11,7 +11,7 @@ import {
     UseGuards
 } from '@nestjs/common';
 import {
-    AddNewQuizResponse,
+    AddNewQuizResponse, AllQuizzesByUser,
     DeleteQuizResponse, GetAllQuizzesByUserResponse,
     GetAllQuizzesResponse, GetOneQuizResponse, UpdatedQuizResponse,
 } from "../interfaces/quizzes";
@@ -39,7 +39,7 @@ export class QuizzesController {
     @Get('/user/:id')
     allQuizzesByUser(
         @Param('id') id: string,
-    ): Promise<GetAllQuizzesByUserResponse> {
+    ): Promise<AllQuizzesByUser> {
         return this.quizzesService.getAllQuizzesByUser(id);
     }
 
