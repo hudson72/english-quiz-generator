@@ -1,10 +1,10 @@
-import {Controller, Delete, Get, HttpStatus, Inject, Param, ParseIntPipe, Patch, Post, UseGuards} from '@nestjs/common';
+import {Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Post, UseGuards} from '@nestjs/common';
 import {
-    AddNewQuestionResponse,
+    AddNewQuestionResponse, AllQuestions,
     DeleteQuestionResponse,
     GetAllQuestionsResponse,
     GetAnswerFeedbackResponse,
-    GetOneQuestionResponse, GetOneQuizQuestionsResponse,
+    GetOneQuestionResponse, GetOneQuizQuestionsResponse, OneQuizQuestions,
     UpdatedQuestionResponse,
 } from "../interfaces/questions";
 import {QuestionsService} from "./questions.service";
@@ -21,7 +21,7 @@ export class QuestionsController {
     }
 
     @Get('/')
-    allQuestions(): Promise<GetAllQuestionsResponse> {
+    allQuestions(): Promise<AllQuestions> {
         return this.questionsService.getAllQuestions();
     }
 
@@ -35,7 +35,7 @@ export class QuestionsController {
     @Get('/category/:category')
     questionsByCategory(
         @Param ('category') category: string,
-        ): Promise<GetOneQuizQuestionsResponse> {
+        ): Promise<OneQuizQuestions> {
         return this.questionsService.getOneQuizQuestions(category);
     }
 

@@ -1,10 +1,10 @@
 import {HttpException, Inject, Injectable} from '@nestjs/common';
 import {
-    AddNewQuestionResponse,
+    AddNewQuestionResponse, AllQuestions,
     DeleteQuestionResponse,
     GetAllQuestionsResponse,
     GetAnswerFeedbackResponse,
-    GetOneQuestionResponse, GetOneQuizQuestionsResponse,
+    GetOneQuestionResponse, GetOneQuizQuestionsResponse, OneQuizQuestions,
     UpdatedQuestionResponse,
 } from "../interfaces/questions";
 import {Questions} from "./questions.entity";
@@ -18,36 +18,46 @@ export class QuestionsService {
     ) {
     }
 
-    async getAllQuestions(): Promise<GetAllQuestionsResponse> {
+    async getAllQuestions(): Promise<AllQuestions> {
 
-        const count = await this.dataSource
+        const totalQuestions = await this.dataSource
             .createQueryBuilder()
             .select('COUNT(questions.id)', 'count')
             .from(Questions, 'questions')
-            .getRawOne();
+            .getCount();
 
-        console.log(count);
+        const allQuestions = await Questions.find();
 
-        return await Questions.find();
+        return {
+            allQuestions,
+            totalQuestions,
+        }
     }
 
-    async getOneQuizQuestions(questionCategory: string): Promise<GetOneQuizQuestionsResponse> {
+    async getOneQuizQuestions(questionCategory: string): Promise<OneQuizQuestions> {
         if (!await Questions.findOne({where: {questionCategory}})) {
-            return {
-                isSuccessful: false,
-                message: `The given questionCategory: '${questionCategory}' doesn't exist!`
-            }
+            throw new HttpException(`The given question category: '${questionCategory}' doesn't exist!`, 404);
         }
-            return await Questions.find({where: {questionCategory}})
+
+        const totalQuestions = await this.dataSource
+            .createQueryBuilder()
+            .select('COUNT(questions.id)', 'count')
+            .from(Questions, 'questions')
+            .where('questionCategory = :questionCategory', {questionCategory})
+            .getCount();
+
+            const quizQuestions = await Questions.find({where: {questionCategory}});
+
+            return {
+                quizQuestions,
+                totalQuestions,
+            }
         }
 
     async findOneQuestion(id: number): Promise<GetOneQuestionResponse> {
         const oneQuestion = await Questions.findOne({where: {id}});
         if (!oneQuestion) {
-            return {
-                isSuccessful: false,
-                message: `Question with ID: '${id}' doesn't exist!`
-            }
+            throw new HttpException(`Question with ID: '${id}' doesn't exist!`, 404);
         } else {
             return oneQuestion
         }
@@ -56,7 +66,7 @@ export class QuestionsService {
     async add(): Promise<AddNewQuestionResponse> {
 
         const newQuestion = Questions.create({
-            questionCategory: 'Synonyms',
+            questionCategory: 'Synonyms01',
             question: 'Synonym of bald',
             a: 'gray',
             b: 'hairless',
@@ -68,10 +78,7 @@ export class QuestionsService {
        if (await Questions.findOne({where: {question: newQuestion.question}})
            &&
            await Questions.findOne({where: {questionCategory: newQuestion.questionCategory}})) {
-           return {
-               isSuccessful: false,
-               message: 'Question already exists! Please provide a new question.',
-           }
+           throw new HttpException('Question already exists! Please provide a new question.', 400);
        } else {
            await newQuestion.save();
            return newQuestion;
@@ -83,13 +90,14 @@ export class QuestionsService {
             await Questions.delete(id);
             return {
                 isSuccessful: true,
-                message: `Question with ID: ${id} has been deleted.`
+                message: `Question with ID: '${id}' has been deleted.`
             }
         } else {
-            return {
-                isSuccessful: false,
-                message: `Question with ID: ${id} doesn't exist!`
-            }
+            // return {
+            //     isSuccessful: false,
+            //     message: `Question with ID: ${id} doesn't exist!`
+            // }
+            throw new HttpException(`Question with the given ID: '${id}' doesn't exist!`, 404);
         }
     }
 
@@ -97,7 +105,7 @@ export class QuestionsService {
         const result = await Questions.findOne({where: {id}});
 
         if (!result) {
-            throw new HttpException(`Question with the given ID: ${id} doesn't exist!`, 404);
+            throw new HttpException(`Question with the given ID: '${id}' doesn't exist!`, 404);
         } else if (result.correct === answer) {
             return {
                 isSuccessful: true,
@@ -114,12 +122,12 @@ export class QuestionsService {
     async update(id: number): Promise<UpdatedQuestionResponse> {
         const questionToUpdate = await Questions.findOne({where: {id}});
         if (!questionToUpdate) {
-            throw new HttpException(`Question with the given ID: ${id} doesn't exist!`, 404);
+            throw new HttpException(`Question with the given ID: '${id}' doesn't exist!`, 404);
         } else {
             await this.dataSource
                 .createQueryBuilder()
                 .update(Questions)
-                .set({question: 'Synonym of bold', c: 'brave', correct: 'c'})
+                .set({question: 'Synonym of bald', correct: 'b'})
                 .where('id = :id', {id})
                 .execute()
         }
