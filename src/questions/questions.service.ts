@@ -1,4 +1,4 @@
-import {Inject, Injectable} from '@nestjs/common';
+import {HttpException, Inject, Injectable} from '@nestjs/common';
 import {
     AddNewQuestionResponse,
     DeleteQuestionResponse,
@@ -94,8 +94,11 @@ export class QuestionsService {
     }
 
     async getAnswerFeedback(id: number, answer: string): Promise<GetAnswerFeedbackResponse> {
-        const result = await Questions.findOneOrFail({where: {id}});
-        if (result.correct === answer) {
+        const result = await Questions.findOne({where: {id}});
+
+        if (!result) {
+            throw new HttpException(`Question with the given ID: ${id} doesn't exist!`, 404);
+        } else if (result.correct === answer) {
             return {
                 isSuccessful: true,
                 message: `Well done! Correct answer is '${answer}'.`
@@ -111,10 +114,7 @@ export class QuestionsService {
     async update(id: number): Promise<UpdatedQuestionResponse> {
         const questionToUpdate = await Questions.findOne({where: {id}});
         if (!questionToUpdate) {
-            return {
-                isSuccessful: false,
-                message: `Sorry, question with ID: '${id}' doesn't exist!.`
-            }
+            throw new HttpException(`Question with the given ID: ${id} doesn't exist!`, 404);
         } else {
             await this.dataSource
                 .createQueryBuilder()
@@ -123,7 +123,6 @@ export class QuestionsService {
                 .where('id = :id', {id})
                 .execute()
         }
-
         return {
             isSuccessful: true,
             message: `Question wit ID: '${id}' has been updated.`

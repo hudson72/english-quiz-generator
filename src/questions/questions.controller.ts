@@ -27,9 +27,7 @@ export class QuestionsController {
 
     @Get('/:id')
     oneQuestion(
-        @Param('id', new ParseIntPipe({
-            errorHttpStatusCode: HttpStatus.FORBIDDEN,
-        })) id: number,
+        @Param('id', ParseIntPipe) id: number,
     ): Promise<GetOneQuestionResponse> {
         return this.questionsService.findOneQuestion(id);
     }
@@ -51,16 +49,14 @@ export class QuestionsController {
     @Delete('/:id')
     @UseGuards(AuthGuard('jwt'))
     deleteQuestion(
-        @Param('id',  new ParseIntPipe({
-            errorHttpStatusCode: HttpStatus.FORBIDDEN,
-        })) id: number,
+        @Param('id',  ParseIntPipe) id: number,
     ): Promise<DeleteQuestionResponse> {
         return this.questionsService.delete(id);
     }
 
     @Get('/answer/:id/:answer')
     answerFeedback(
-        @Param ('id') id: number,
+        @Param ('id',  ParseIntPipe) id: number,
         @Param ('answer') answer: string,
     ): Promise<GetAnswerFeedbackResponse> {
         return this.questionsService.getAnswerFeedback(id, answer);
@@ -69,9 +65,7 @@ export class QuestionsController {
     @Patch('/update/:id')
     @UseGuards(AuthGuard('jwt'))
     updateQuestion(
-        @Param('id', new ParseIntPipe({
-            errorHttpStatusCode: HttpStatus.FORBIDDEN,
-        })) id: number,
+        @Param('id', ParseIntPipe) id: number,
     ): Promise<UpdatedQuestionResponse> {
         return this.questionsService.update(id);
     }
