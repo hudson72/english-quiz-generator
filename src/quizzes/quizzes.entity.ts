@@ -13,9 +13,6 @@ export class Quizzes extends BaseEntity {
     @Column()
     totalQuestions: number;
 
-    // @Column()
-    // usersId: string;
-
     @ManyToOne(type => Users, entity => entity.quizzes)
     @JoinColumn()
     users: Users;

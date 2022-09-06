@@ -1,4 +1,4 @@
-import {Inject, Injectable} from '@nestjs/common';
+import {HttpException, Inject, Injectable} from '@nestjs/common';
 import {
     AddNewQuizResponse,
     DeleteQuizResponse, GetAllQuizzesByUserResponse,
@@ -61,10 +61,11 @@ export class QuizzesService {
 
     async findOneQuiz(id: number): Promise<GetOneQuizResponse> {
         if (!await Quizzes.findOne({where: {id}})) {
-            return {
-                isSuccessful: false,
-                message: `Quiz with ID: '${id}' doesn't exist!`
-            }
+            // return {
+            //     isSuccessful: false,
+            //     message: `Quiz with ID: '${id}' doesn't exist!`
+            // }
+            throw new HttpException(`Quiz with ID: '${id}' doesn't exist!`, 404);
         } else {
             return await Quizzes.findOne({where: {id}})
         }

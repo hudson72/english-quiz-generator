@@ -32,9 +32,10 @@ export class QuizzesController {
 
     @Get('/:id')
     oneQuiz(
-        @Param('id', new ParseIntPipe({
-            errorHttpStatusCode: HttpStatus.FORBIDDEN,
-        })) id: number,
+        // @Param('id', new ParseIntPipe({
+        //     errorHttpStatusCode: HttpStatus.BAD_REQUEST,
+        // })) id: number,
+        @Param('id', ParseIntPipe) id: number,
     ): Promise<GetOneQuizResponse> {
         return this.quizzesService.findOneQuiz(id);
     }
