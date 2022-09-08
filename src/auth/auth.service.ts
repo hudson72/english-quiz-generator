@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {HttpException, Injectable} from '@nestjs/common';
 import {Response} from 'express';
 import {AuthLoginDto} from "./dto/auth-login.dto";
 import {Users} from "../users/users.entity";
@@ -40,10 +40,6 @@ export class AuthService {
                     passHash: hashPass(req.pass),
                 }});
 
-            if (!user) {
-                return res.json({error: 'Invalid login data!'});
-            }
-
             const token = this.createToken(await this.generateToken(user));
 
             return res
@@ -54,7 +50,7 @@ export class AuthService {
                 })
                 .json({ok: true});
         } catch (e) {
-            return res.json({error: e.message})
+            throw new HttpException('Invalid login data!', 401)
         }
     };
 

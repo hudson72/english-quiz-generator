@@ -1,10 +1,10 @@
-import {Controller, Delete, Get, HttpStatus, Inject, Param, ParseIntPipe, Patch, Post, UseGuards} from '@nestjs/common';
+import {Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Post, UseGuards} from '@nestjs/common';
 import {
-    AddNewQuestionResponse,
+    AddNewQuestionResponse, AllQuestions,
     DeleteQuestionResponse,
     GetAllQuestionsResponse,
     GetAnswerFeedbackResponse,
-    GetOneQuestionResponse, GetOneQuizQuestionsResponse,
+    GetOneQuestionResponse, GetOneQuizQuestionsResponse, OneQuizQuestions,
     UpdatedQuestionResponse,
 } from "../interfaces/questions";
 import {QuestionsService} from "./questions.service";
@@ -21,15 +21,13 @@ export class QuestionsController {
     }
 
     @Get('/')
-    allQuestions(): Promise<GetAllQuestionsResponse> {
+    allQuestions(): Promise<AllQuestions> {
         return this.questionsService.getAllQuestions();
     }
 
     @Get('/:id')
     oneQuestion(
-        @Param('id', new ParseIntPipe({
-            errorHttpStatusCode: HttpStatus.FORBIDDEN,
-        })) id: number,
+        @Param('id', ParseIntPipe) id: number,
     ): Promise<GetOneQuestionResponse> {
         return this.questionsService.findOneQuestion(id);
     }
@@ -37,7 +35,7 @@ export class QuestionsController {
     @Get('/category/:category')
     questionsByCategory(
         @Param ('category') category: string,
-        ): Promise<GetOneQuizQuestionsResponse> {
+        ): Promise<OneQuizQuestions> {
         return this.questionsService.getOneQuizQuestions(category);
     }
 
@@ -51,16 +49,14 @@ export class QuestionsController {
     @Delete('/:id')
     @UseGuards(AuthGuard('jwt'))
     deleteQuestion(
-        @Param('id',  new ParseIntPipe({
-            errorHttpStatusCode: HttpStatus.FORBIDDEN,
-        })) id: number,
+        @Param('id',  ParseIntPipe) id: number,
     ): Promise<DeleteQuestionResponse> {
         return this.questionsService.delete(id);
     }
 
     @Get('/answer/:id/:answer')
     answerFeedback(
-        @Param ('id') id: number,
+        @Param ('id',  ParseIntPipe) id: number,
         @Param ('answer') answer: string,
     ): Promise<GetAnswerFeedbackResponse> {
         return this.questionsService.getAnswerFeedback(id, answer);
@@ -69,9 +65,7 @@ export class QuestionsController {
     @Patch('/update/:id')
     @UseGuards(AuthGuard('jwt'))
     updateQuestion(
-        @Param('id', new ParseIntPipe({
-            errorHttpStatusCode: HttpStatus.FORBIDDEN,
-        })) id: number,
+        @Param('id', ParseIntPipe) id: number,
     ): Promise<UpdatedQuestionResponse> {
         return this.questionsService.update(id);
     }

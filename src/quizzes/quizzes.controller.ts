@@ -3,7 +3,6 @@ import {
     Controller,
     Delete,
     Get,
-    HttpStatus,
     Inject,
     Param,
     ParseIntPipe,
@@ -12,7 +11,7 @@ import {
     UseGuards
 } from '@nestjs/common';
 import {
-    AddNewQuizResponse,
+    AddNewQuizResponse, AllQuizzesByUser,
     DeleteQuizResponse, GetAllQuizzesByUserResponse,
     GetAllQuizzesResponse, GetOneQuizResponse, UpdatedQuizResponse,
 } from "../interfaces/quizzes";
@@ -32,9 +31,6 @@ export class QuizzesController {
 
     @Get('/:id')
     oneQuiz(
-        // @Param('id', new ParseIntPipe({
-        //     errorHttpStatusCode: HttpStatus.BAD_REQUEST,
-        // })) id: number,
         @Param('id', ParseIntPipe) id: number,
     ): Promise<GetOneQuizResponse> {
         return this.quizzesService.findOneQuiz(id);
@@ -43,7 +39,7 @@ export class QuizzesController {
     @Get('/user/:id')
     allQuizzesByUser(
         @Param('id') id: string,
-    ): Promise<GetAllQuizzesByUserResponse> {
+    ): Promise<AllQuizzesByUser> {
         return this.quizzesService.getAllQuizzesByUser(id);
     }
 
@@ -58,16 +54,13 @@ export class QuizzesController {
         @Body() newQuiz: AddNewQuizDto,
         @UserObj() user: Users,
     ): Promise<AddNewQuizResponse> {
-        console.log(user);
         return this.quizzesService.add(newQuiz, user);
     }
 
     @Delete('/:id')
     @UseGuards(AuthGuard('jwt'))
     deleteQuiz(
-        @Param('id', new ParseIntPipe({
-            errorHttpStatusCode: HttpStatus.FORBIDDEN,
-        })) id: number,
+        @Param('id', ParseIntPipe) id: number,
     ): Promise<DeleteQuizResponse> {
         return this.quizzesService.delete(id);
     }
@@ -75,12 +68,8 @@ export class QuizzesController {
     @Patch('/:id/:totalQuestions')
     @UseGuards(AuthGuard('jwt'))
     updateQuiz(
-        @Param('id', new ParseIntPipe({
-            errorHttpStatusCode: HttpStatus.FORBIDDEN,
-        })) id: number,
-        @Param('totalQuestions', new ParseIntPipe({
-            errorHttpStatusCode: HttpStatus.FORBIDDEN,
-        })) totalQuestions: number,
+        @Param('id', ParseIntPipe) id: number,
+        @Param('totalQuestions', ParseIntPipe) totalQuestions: number,
     ): Promise<UpdatedQuizResponse> {
         return this.quizzesService.update(id, totalQuestions)
     }

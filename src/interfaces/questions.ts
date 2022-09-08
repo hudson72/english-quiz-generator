@@ -8,6 +8,16 @@ export interface Question {
     correct: string;
 }
 
+export interface AllQuestions {
+    allQuestions: Question[];
+    totalQuestions: number;
+}
+
+export interface OneQuizQuestions {
+    quizQuestions: Question[];
+    totalQuestions: number;
+}
+
 export type GetAllQuestionsResponse = Question[];
 
 export type GetOneQuizQuestionsResponse = Question[] | {
