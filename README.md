@@ -8,8 +8,7 @@
 * [Setup](#setup)
 * [Usage](#usage)
 * [Project Status](#project-status)
-* [Room for improvement](#room-for-improvement)
-* [Contact](#contact)
+* [Contact info](#contact-info)
 
 ## General Info
 This is my final project for the online back-end course 'MegaK'. It gives me an opportunity to put the knowledge acquired during the course to the test.
@@ -33,7 +32,6 @@ Back-end part of the project includes:
 * listing, updating and deleting existing quizzes and questions
 
 ### Upcoming
-#### Back-end
 #### Front-end
 * user (teacher) interface
 * user (student) interface
@@ -46,8 +44,9 @@ $ cd english_quiz_generator
 $ npm install
 $ nest start --watch
 ```
+You will then be able to access it at localhost:3000
 
-## Status
+## Project Status
 In progress
 
 ## Contact info
