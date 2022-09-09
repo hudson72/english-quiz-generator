@@ -1,15 +1,15 @@
-import {Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Post, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Post, UseGuards} from '@nestjs/common';
 import {
     AddNewQuestionResponse, AllQuestions,
     DeleteQuestionResponse,
-    GetAllQuestionsResponse,
     GetAnswerFeedbackResponse,
-    GetOneQuestionResponse, GetOneQuizQuestionsResponse, OneQuizQuestions,
+    GetOneQuestionResponse, OneQuizQuestions,
     UpdatedQuestionResponse,
 } from "../interfaces/questions";
 import {QuestionsService} from "./questions.service";
 import {DataSource} from "typeorm";
 import {AuthGuard} from "@nestjs/passport";
+import {AddNewQuestionDto} from "./dto/AddNewQuestionDto";
 
 @Controller('questions')
 export class QuestionsController {
@@ -42,8 +42,9 @@ export class QuestionsController {
     @Post('/')
     @UseGuards(AuthGuard('jwt'))
     addNewQuestion(
+        @Body() newQuestion: AddNewQuestionDto,
     ): Promise<AddNewQuestionResponse> {
-        return this.questionsService.add();
+        return this.questionsService.add(newQuestion);
     }
 
     @Delete('/:id')
