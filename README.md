@@ -55,7 +55,7 @@ You will then be able to access it at localhost:3000. In order to create and sav
 
 ## Usage
 As this is just a back-end part of the project, you can only test the app's end-points using one of the API clients like Insomnia or Postman. Please follow the below steps to get started. I'm using Insomnia in my presentation.
-#### - Register a new user using POST at: http://localhost:3000/users/register 
+![usage_info](./src/media/docs/usage_info.pdf)
 
 ## Project Status
 In progress
