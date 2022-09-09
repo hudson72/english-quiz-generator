@@ -28,8 +28,9 @@ Project is created with:
 Back-end part of the project includes:
 * new user registration
 * user authorisation
-* creating a new quiz and questions
-* listing, updating and deleting existing quizzes and questions
+* creating and saving new quizzes and questions to database
+* listing, updating and deleting existing quizzes and questions from database
+* data validation
 
 ### Upcoming
 #### Front-end
@@ -38,13 +39,23 @@ Back-end part of the project includes:
 * HTML to PDF converter for quiz printing
 
 ## Setup
-To run this project, clone this repository and install it locally using npm:
-```
+To clone & run this application, you'll need Git & Node.js installed on you PC.
+From your command line:
+```bash
+# Clone this repository
+$ git clone https://github.com/hudson72/english-quiz-generator
+# Go to project directory
 $ cd english_quiz_generator
+# Install dependencies
 $ npm install
+# Run the app
 $ nest start --watch
 ```
-You will then be able to access it at localhost:3000
+You will then be able to access it at localhost:3000. In order to create and save a new quiz you'll need MySQL database installed on your PC.
+
+## Usage
+As this is just a back-end part of the project, you can only test the app's end-points using one of the API clients like Insomnia or Postman. Please follow the below steps to get started. I'm using Insomnia in my presentation.
+#### - Register a new user using POST at: http://localhost:3000/users/register 
 
 ## Project Status
 In progress

@@ -2,13 +2,13 @@ import {HttpException, Inject, Injectable} from '@nestjs/common';
 import {
     AddNewQuestionResponse, AllQuestions,
     DeleteQuestionResponse,
-    GetAllQuestionsResponse,
     GetAnswerFeedbackResponse,
-    GetOneQuestionResponse, GetOneQuizQuestionsResponse, OneQuizQuestions,
+    GetOneQuestionResponse, OneQuizQuestions,
     UpdatedQuestionResponse,
 } from "../interfaces/questions";
 import {Questions} from "./questions.entity";
 import {DataSource} from "typeorm";
+import {AddNewQuestionDto} from "./dto/AddNewQuestionDto";
 
 @Injectable()
 export class QuestionsService {
@@ -63,25 +63,26 @@ export class QuestionsService {
         }
     }
 
-    async add(): Promise<AddNewQuestionResponse> {
+    async add(newQuestion: AddNewQuestionDto): Promise<AddNewQuestionResponse> {
 
-        const newQuestion = Questions.create({
-            questionCategory: 'Synonyms01',
-            question: 'Synonym of bald',
-            a: 'gray',
-            b: 'hairless',
-            c: 'clever',
-            d: 'strong',
-            correct: 'b',
-        })
+        const newQuestionObj = new Questions();
+        const { questionCategory, question, a, b, c, d, correct } = newQuestion;
 
-       if (await Questions.findOne({where: {question: newQuestion.question}})
+        newQuestionObj.questionCategory = questionCategory;
+        newQuestionObj.question = question;
+        newQuestionObj.a = a;
+        newQuestionObj.b = b;
+        newQuestionObj.c = c;
+        newQuestionObj.d = d;
+        newQuestionObj.correct = correct;
+
+       if (await Questions.findOne({where: {question: newQuestionObj.question}})
            &&
-           await Questions.findOne({where: {questionCategory: newQuestion.questionCategory}})) {
+           await Questions.findOne({where: {questionCategory: newQuestionObj.questionCategory}})) {
            throw new HttpException('Question already exists! Please provide a new question.', 400);
        } else {
-           await newQuestion.save();
-           return newQuestion;
+           await newQuestionObj.save();
+           return newQuestionObj;
        }
     }
 
@@ -93,10 +94,6 @@ export class QuestionsService {
                 message: `Question with ID: '${id}' has been deleted.`
             }
         } else {
-            // return {
-            //     isSuccessful: false,
-            //     message: `Question with ID: ${id} doesn't exist!`
-            // }
             throw new HttpException(`Question with the given ID: '${id}' doesn't exist!`, 404);
         }
     }

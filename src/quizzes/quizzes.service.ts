@@ -1,7 +1,7 @@
 import {HttpException, Inject, Injectable} from '@nestjs/common';
 import {
     AddNewQuizResponse, AllQuizzesByUser,
-    DeleteQuizResponse, GetAllQuizzesByUserResponse,
+    DeleteQuizResponse,
     GetAllQuizzesResponse, GetOneQuizResponse, UpdatedQuizResponse,
 } from "../interfaces/quizzes";
 import {Quizzes} from "./quizzes.entity";
