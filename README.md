@@ -11,7 +11,7 @@
 * [Contact info](#contact-info)
 
 ## General Info
-This is my final project for the online back-end course 'MegaK'. It gives me an opportunity to put the knowledge acquired during the course to the test.
+This is my final project for the online full stack course 'MegaK'. It gives me an opportunity to put the knowledge acquired during the course to the test.
 The main aim of the app is to help teachers of English to create and share quizzes which can be used in lessons.
 
 ## Technologies
