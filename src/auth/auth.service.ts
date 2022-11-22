@@ -48,7 +48,7 @@ export class AuthService {
                     domain: 'localhost',
                     httpOnly: true,
                 })
-                .json({ok: true});
+                .json({message: "You're now logged in"});
         } catch (e) {
             throw new HttpException('Invalid login data!', 401)
         }
