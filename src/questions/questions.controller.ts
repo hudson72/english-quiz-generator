@@ -9,7 +9,7 @@ import {
 import {QuestionsService} from "./questions.service";
 import {DataSource} from "typeorm";
 import {AuthGuard} from "@nestjs/passport";
-import {AddNewQuestionDto} from "./dto/AddNewQuestionDto";
+import {AddNewQuestionDto} from "./dto/add-new-question.dto";
 
 @Controller('questions')
 export class QuestionsController {

@@ -8,7 +8,7 @@ import {
 } from "../interfaces/questions";
 import {Questions} from "./questions.entity";
 import {DataSource} from "typeorm";
-import {AddNewQuestionDto} from "./dto/AddNewQuestionDto";
+import {AddNewQuestionDto} from "./dto/add-new-question.dto";
 
 @Injectable()
 export class QuestionsService {
