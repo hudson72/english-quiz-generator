@@ -10,6 +10,7 @@ import {QuestionsService} from "./questions.service";
 import {DataSource} from "typeorm";
 import {AuthGuard} from "@nestjs/passport";
 import {AddNewQuestionDto} from "./dto/add-new-question.dto";
+import {UpdateQuestionDto} from "./dto/update-question.dto";
 
 @Controller('questions')
 export class QuestionsController {
@@ -67,6 +68,7 @@ export class QuestionsController {
     @UseGuards(AuthGuard('jwt'))
     updateQuestion(
         @Param('id', ParseIntPipe) id: number,
+        @Body() updateQuestionDto: UpdateQuestionDto
     ): Promise<UpdatedQuestionResponse> {
         return this.questionsService.update(id);
     }
