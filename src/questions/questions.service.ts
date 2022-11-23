@@ -9,6 +9,8 @@ import {
 import {Questions} from "./questions.entity";
 import {DataSource} from "typeorm";
 import {AddNewQuestionDto} from "./dto/add-new-question.dto";
+import {GetAnswerDto} from "./dto/get-answer.dto";
+import {UpdateQuestionDto} from "./dto/update-question.dto";
 
 @Injectable()
 export class QuestionsService {
@@ -106,7 +108,7 @@ export class QuestionsService {
         } else if (result.correct === answer) {
             return {
                 isSuccessful: true,
-                message: `Well done! Correct answer is '${answer}'.`
+                message: `Well done! The correct answer is '${answer}'.`
             }
         } else {
             return {
@@ -116,18 +118,13 @@ export class QuestionsService {
         }
     }
 
-    async update(id: number): Promise<UpdatedQuestionResponse> {
+    async update(id: number, updateQuestionDto: UpdateQuestionDto): Promise<UpdatedQuestionResponse> {
+        const {questionCategory, question, a, b, c, d, correct} = updateQuestionDto;
         const questionToUpdate = await Questions.findOne({where: {id}});
-        if (!questionToUpdate) {
-            throw new HttpException(`Question with the given ID: '${id}' doesn't exist!`, 404);
-        } else {
-            await this.dataSource
-                .createQueryBuilder()
-                .update(Questions)
-                .set({question: 'Synonym of bald', correct: 'b'})
-                .where('id = :id', {id})
-                .execute()
-        }
+        if (!questionToUpdate) throw new HttpException(`Question with the given ID: '${id}' doesn't exist!`, 404);
+        if (!questionCategory && !question && !a && !b && !c && !d && !correct) throw new HttpException(`Sorry, incorrect or missing data for update! Please provide a new value for at least one of the following keys: 'questionCategory', 'question', 'a', 'b', 'c', 'd', 'correct'.`, 400);
+
+        await Questions.update(id, updateQuestionDto);
         return {
             isSuccessful: true,
             message: `Question wit ID: '${id}' has been updated.`

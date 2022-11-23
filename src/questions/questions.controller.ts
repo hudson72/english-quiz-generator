@@ -1,4 +1,16 @@
-import {Body, Controller, Delete, Get, Inject, Param, ParseIntPipe, Patch, Post, UseGuards} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Inject,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    Query,
+    UseGuards, UsePipes, ValidationPipe
+} from '@nestjs/common';
 import {
     AddNewQuestionResponse, AllQuestions,
     DeleteQuestionResponse,
@@ -11,6 +23,8 @@ import {DataSource} from "typeorm";
 import {AuthGuard} from "@nestjs/passport";
 import {AddNewQuestionDto} from "./dto/add-new-question.dto";
 import {UpdateQuestionDto} from "./dto/update-question.dto";
+import {GetAnswerDto} from "./dto/get-answer.dto";
+import {IsAlpha} from "class-validator";
 
 @Controller('questions')
 export class QuestionsController {
@@ -41,6 +55,7 @@ export class QuestionsController {
     }
 
     @Post('/')
+    @UsePipes(ValidationPipe)
     @UseGuards(AuthGuard('jwt'))
     addNewQuestion(
         @Body() newQuestion: AddNewQuestionDto,
@@ -58,7 +73,7 @@ export class QuestionsController {
 
     @Get('/answer/:id/:answer')
     answerFeedback(
-        @Param ('id',  ParseIntPipe) id: number,
+        @Param ('id', ParseIntPipe) id: number,
         @Param ('answer') answer: string,
     ): Promise<GetAnswerFeedbackResponse> {
         return this.questionsService.getAnswerFeedback(id, answer);
@@ -70,6 +85,6 @@ export class QuestionsController {
         @Param('id', ParseIntPipe) id: number,
         @Body() updateQuestionDto: UpdateQuestionDto
     ): Promise<UpdatedQuestionResponse> {
-        return this.questionsService.update(id);
+        return this.questionsService.update(id, updateQuestionDto);
     }
 }
