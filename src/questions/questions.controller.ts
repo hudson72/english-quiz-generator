@@ -8,7 +8,6 @@ import {
     ParseIntPipe,
     Patch,
     Post,
-    Query,
     UseGuards, UsePipes, ValidationPipe
 } from '@nestjs/common';
 import {
@@ -23,8 +22,6 @@ import {DataSource} from "typeorm";
 import {AuthGuard} from "@nestjs/passport";
 import {AddNewQuestionDto} from "./dto/add-new-question.dto";
 import {UpdateQuestionDto} from "./dto/update-question.dto";
-import {GetAnswerDto} from "./dto/get-answer.dto";
-import {IsAlpha} from "class-validator";
 
 @Controller('questions')
 export class QuestionsController {
@@ -80,6 +77,7 @@ export class QuestionsController {
     }
 
     @Patch('/update/:id')
+    @UsePipes(ValidationPipe)
     @UseGuards(AuthGuard('jwt'))
     updateQuestion(
         @Param('id', ParseIntPipe) id: number,
