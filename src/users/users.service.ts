@@ -18,7 +18,7 @@ export class UsersService {
         @Inject(DataSource) private dataSource: DataSource,
     ) {
     }
-
+    //todo: instead of 'filter' fn below, check Nest's Serializer Interceptor to exclude pass from the return object
     filter(user: Users): RegisterUserResponse {
         const {id, email} = user;
         return {id, email};
@@ -35,10 +35,11 @@ export class UsersService {
                 message: `Sorry, user with email: ${user.email} already exists!`
             }
         } else {
+
             await user.save();
             return this.filter(user);
         }
-    }
+    };
 
     async getUser(id: string): Promise<GetUserResponse> {
         const userToGet = await Users.findOne({where: {id}});

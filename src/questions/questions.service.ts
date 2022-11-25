@@ -17,7 +17,7 @@ export class QuestionsService {
     constructor(
         @Inject(DataSource) private dataSource: DataSource,
     ) {
-    }
+    };
 
     async getAllQuestions(): Promise<AllQuestions> {
 
@@ -32,8 +32,8 @@ export class QuestionsService {
         return {
             allQuestions,
             totalQuestions,
-        }
-    }
+        };
+    };
 
     async getOneQuizQuestions(questionCategory: string): Promise<OneQuizQuestions> {
         if (!await Questions.findOne({where: {questionCategory}})) {
@@ -53,16 +53,16 @@ export class QuestionsService {
                 quizQuestions,
                 totalQuestions,
             }
-        }
+        };
 
     async findOneQuestion(id: number): Promise<GetOneQuestionResponse> {
         const oneQuestion = await Questions.findOne({where: {id}});
         if (!oneQuestion) {
             throw new HttpException(`Question with ID: '${id}' doesn't exist!`, 404);
         } else {
-            return oneQuestion
+            return oneQuestion;
         }
-    }
+    };
 
     async add(newQuestion: AddNewQuestionDto): Promise<AddNewQuestionResponse> {
 
@@ -85,7 +85,7 @@ export class QuestionsService {
            await newQuestionObj.save();
            return newQuestionObj;
        }
-    }
+    };
 
     async delete(id: number): Promise<DeleteQuestionResponse> {
         if (await Questions.findOne({where: {id}})) {
@@ -97,7 +97,7 @@ export class QuestionsService {
         } else {
             throw new HttpException(`Question with the given ID: '${id}' doesn't exist!`, 404);
         }
-    }
+    };
 
     async getAnswerFeedback(id: number, answer: string): Promise<GetAnswerFeedbackResponse> {
         const result = await Questions.findOne({where: {id}});
@@ -113,9 +113,9 @@ export class QuestionsService {
             return {
                 isSuccessful: false,
                 message: `Sorry! The answer '${answer}' is incorrect!`
-            }
+            };
         }
-    }
+    };
 
     async update(id: number, updateQuestionDto: UpdateQuestionDto): Promise<UpdatedQuestionResponse> {
         const {questionCategory, question, a, b, c, d, correct} = updateQuestionDto;
@@ -128,6 +128,6 @@ export class QuestionsService {
         return {
             isSuccessful: true,
             message: `Question wit ID: '${id}' has been updated.`
-        }
-    }
+        };
+    };
 }

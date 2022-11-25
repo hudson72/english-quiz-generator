@@ -44,7 +44,7 @@ export class QuestionsController {
         return this.questionsService.findOneQuestion(id);
     }
 
-    @Get('/category/:category')
+    @Get('/quiz/category/:category')
     questionsByCategory(
         @Param ('category') category: string,
         ): Promise<OneQuizQuestions> {
