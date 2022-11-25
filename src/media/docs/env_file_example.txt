@@ -1,6 +1,6 @@
 DB_HOST=localhost
 DB_PORT=3306
 DB_USERNAME=root
-DB_PASSWORD=
+DB_PASSWORD=database_password           <-- or leave empty if not using a password e.g. DB_PASSWORD=
 DB_NAME=database_name
 JWT_SECRET=jvfdjvnfjnvkjdfnjndf9er45t902]3-_+)**^&*(@LpkpokokJHHJPO:KK@L:<@:L           <-- 32 or more random characters long
