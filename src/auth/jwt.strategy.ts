@@ -16,9 +16,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor() {
         super({
             jwtFromRequest: cookieExtractor,
-            secretOrKey: 'dfrnjgiu5r768-043o-405890-23 %%$^%RTYGJ:OJKML<@~:LK@KS:NIUUYS'
+            secretOrKey: process.env.JWT_SECRET,
         });
-    }
+    };
 
     async validate(payload: JwtPayload, done: (error, user) => void) {
         if (!payload || !payload.id) {
@@ -31,5 +31,5 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         }
 
         done(null, user);
-    }
+    };
 }

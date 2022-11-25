@@ -1,5 +1,4 @@
-import {BaseEntity, Column, Entity, JoinColumn, JoinTable, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {GetAllQuizzesByUserResponse, SingleQuiz, SingleQuizByUser} from "../interfaces/quizzes";
+import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {Users} from "../users/users.entity";
 
 @Entity()

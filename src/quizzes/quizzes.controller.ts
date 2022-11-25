@@ -28,26 +28,26 @@ export class QuizzesController {
     constructor(
        @Inject(QuizzesService) private quizzesService: QuizzesService,
     ) {
-    }
+    };
 
     @Get('/:id')
     oneQuiz(
         @Param('id', ParseIntPipe) id: number,
     ): Promise<GetOneQuizResponse> {
         return this.quizzesService.findOneQuiz(id);
-    }
+    };
 
     @Get('/user/:id')
     allQuizzesByUser(
         @Param('id') id: string,
     ): Promise<AllQuizzesByUser> {
         return this.quizzesService.getAllQuizzesByUser(id);
-    }
+    };
 
     @Get('/')
     allQuizzes(): Promise<GetAllQuizzesResponse> {
         return this.quizzesService.getAllQuizzes();
-    }
+    };
 
     @Post('/')
     @UseGuards(AuthGuard('jwt'))
@@ -56,7 +56,7 @@ export class QuizzesController {
         @UserObj() user: Users,
     ): Promise<AddNewQuizResponse> {
         return this.quizzesService.add(newQuiz, user);
-    }
+    };
 
     @Delete('/:id')
     @UseGuards(AuthGuard('jwt'))
@@ -64,7 +64,7 @@ export class QuizzesController {
         @Param('id', ParseIntPipe) id: number,
     ): Promise<DeleteQuizResponse> {
         return this.quizzesService.delete(id);
-    }
+    };
 
     @Patch('/:id')
     @UseGuards(AuthGuard('jwt'))
@@ -73,5 +73,5 @@ export class QuizzesController {
         @Body() updateQuizDto: UpdateQuizDto
     ): Promise<UpdatedQuizResponse> {
         return this.quizzesService.update(id, updateQuizDto)
-    }
+    };
 }

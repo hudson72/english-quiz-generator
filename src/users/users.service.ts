@@ -17,12 +17,12 @@ export class UsersService {
     constructor(
         @Inject(DataSource) private dataSource: DataSource,
     ) {
-    }
+    };
     //todo: instead of 'filter' fn below, check Nest's Serializer Interceptor to exclude pass from the return object
     filter(user: Users): RegisterUserResponse {
         const {id, email} = user;
         return {id, email};
-    }
+    };
 
     async register(newUser: RegisterDto): Promise<RegisterUserResponse> {
         const user = new Users();
@@ -51,11 +51,11 @@ export class UsersService {
         } else {
             return userToGet;
         }
-    }
+    };
 
     async getAllUsers(): Promise<GetAllUsersResponse> {
         return await Users.find();
-    }
+    };
 
     async getUserAndQuizzes(id: string): Promise<GetUserResponse> {
         const userToGet = await Users.findOne({where: {id}, relations: ['quizzes']});
@@ -67,11 +67,11 @@ export class UsersService {
         } else {
             return userToGet
         }
-    }
+    };
 
     async getAllUsersAndQuizzes(): Promise<GetAllUsersResponse> {
         return await Users.find({relations: ['quizzes']});
-    }
+    };
 
     async update(id: string, email: string): Promise<UpdatedUserResponse> {
         if (!await Users.findOne({where: {id}})) {
@@ -90,8 +90,8 @@ export class UsersService {
         return {
             isSuccessful: true,
             message: `User with ID: '${id}' has been updated with new email: '${email}'.`,
-        }
-    }
+        };
+    };
 
     async delete(id: string): Promise<DeleteUserResponse> {
         const userToDelete = await Users.findOne({where: {id}});
@@ -105,7 +105,7 @@ export class UsersService {
             return {
                 isSuccessful: true,
                 message: `User with ID: '${id}' has been deleted.`
-            }
+            };
         }
-    }
+    };
 }

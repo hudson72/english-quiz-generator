@@ -18,16 +18,16 @@ export class QuizzesService {
         @Inject(DataSource) private dataSource: DataSource,
         @Inject(UsersService) private usersService: UsersService,
     ) {
-    }
+    };
 
     filter(quiz: Quizzes): AddNewQuizResponse {
         const {quizName, totalQuestions} = quiz;
         return {quizName, totalQuestions};
-    }
+    };
 
     async getAllQuizzes(): Promise<GetAllQuizzesResponse> {
         return await Quizzes.find();
-    }
+    };
 
     async add(newQuiz: AddNewQuizDto, user: Users): Promise<AddNewQuizResponse> {
     const {quizName, totalQuestions} = newQuiz;
@@ -35,15 +35,13 @@ export class QuizzesService {
      quiz.quizName = quizName;
      quiz.totalQuestions = totalQuestions;
 
-        if (await Quizzes.findOne({where: {quizName}})) {
-            throw new HttpException(`Sorry, quizName: '${quizName}' already exists! Please provide a new quizName.`, 400);
-        } else {
-            quiz.users = user;
-            await quiz.save();
+     if (await Quizzes.findOne({where: {quizName}})) throw new HttpException(`Sorry, quizName: '${quizName}' already exists! Please provide a new quizName.`, 400);
 
-            return this.filter(quiz);
-        }
-    }
+     quiz.users = user;
+     await quiz.save();
+
+     return this.filter(quiz);
+    };
 
     async findOneQuiz(id: number): Promise<GetOneQuizResponse> {
         if (!await Quizzes.findOne({where: {id}})) {
@@ -51,7 +49,7 @@ export class QuizzesService {
         } else {
             return await Quizzes.findOne({where: {id}})
         }
-    }
+    };
 
     async getAllQuizzesByUser(id: string): Promise<AllQuizzesByUser> {
         if (!await Users.findOne({where: {id}})) {
@@ -73,8 +71,8 @@ export class QuizzesService {
         return {
             quizzesByUser,
             totalQuizzes,
-        }
-    }
+        };
+    };
 
     async delete(id: number): Promise<DeleteQuizResponse> {
 
@@ -87,7 +85,7 @@ export class QuizzesService {
         } else {
             throw new HttpException(`Sorry, quiz with ID: '${id}' doesn't exist!`, 404);
         }
-    }
+    };
         async update(id: number, updateQuizDto: UpdateQuizDto): Promise<UpdatedQuizResponse> {
         const {quizName, totalQuestions} = updateQuizDto;
             const quizToUpdate = await Quizzes.findOne({where: {id}});
