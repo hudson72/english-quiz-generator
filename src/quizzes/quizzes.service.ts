@@ -30,19 +30,13 @@ export class QuizzesService {
     }
 
     async add(newQuiz: AddNewQuizDto, user: Users): Promise<AddNewQuizResponse> {
-
+    const {quizName, totalQuestions} = newQuiz;
      const quiz = new Quizzes();
-     quiz.quizName = newQuiz.quizName;
-     quiz.totalQuestions = newQuiz.totalQuestions;
+     quiz.quizName = quizName;
+     quiz.totalQuestions = totalQuestions;
 
-     if (newQuiz.quizName === 'undefined' || typeof newQuiz.quizName !== 'string') {
-         throw new HttpException(`Please provide a 'quizName'! It must be a string!`, 400);
-     } else if (newQuiz.totalQuestions <= 0 || typeof newQuiz.totalQuestions !== 'number' ) {
-         throw new HttpException(`Please provide a 'totalQuestions'! It must be a number greater than 0!`, 400);
-     }
-
-        if (await Quizzes.findOne({where: {quizName: newQuiz.quizName}})) {
-            throw new HttpException(`Sorry, quizName: '${newQuiz.quizName}' already exists! Please provide a new quizName.`, 400);
+        if (await Quizzes.findOne({where: {quizName}})) {
+            throw new HttpException(`Sorry, quizName: '${quizName}' already exists! Please provide a new quizName.`, 400);
         } else {
             quiz.users = user;
             await quiz.save();
