@@ -13,7 +13,7 @@ export class AuthService {
     private createToken(currTokenId: string): {accessToken: string, expiresIn: number} {
         const payload: JwtPayload = {id: currTokenId};
         const expiresIn = 60 * 60 * 24;
-        const accessToken = sign(payload, 'dfrnjgiu5r768-043o-405890-23 %%$^%RTYGJ:OJKML<@~:LK@KS:NIUUYS', {expiresIn});
+        const accessToken = sign(payload, process.env.JWT_SECRET, {expiresIn});
         return {
             accessToken,
             expiresIn,
@@ -48,7 +48,7 @@ export class AuthService {
                     domain: 'localhost',
                     httpOnly: true,
                 })
-                .json({ok: true});
+                .json({message: "You're now logged in!"});
         } catch (e) {
             throw new HttpException('Invalid login data!', 401)
         }
@@ -66,9 +66,9 @@ export class AuthService {
                     httpOnly: true,
                 }
             );
-            return res.json({ok: true});
+            return res.json({message: `You're now logged out!`});
         } catch (e) {
             return res.json({error: e.message});
         }
-    }
+    };
 }

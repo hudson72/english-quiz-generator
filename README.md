@@ -51,7 +51,7 @@ $ npm install
 # Run the app
 $ nest start --watch
 ```
-You will then be able to access it at localhost:3000. In order to create and save a new quiz you'll need MySQL database installed on your PC.
+You will then be able to access it at localhost:3000. In order to create and save a new quiz you'll need MySQL database installed on your PC. The database config & JWT_SECRET should be saved in .env file which needs to be created in the root folder of the project. Simply create a file called .env with the content as per the following example: [.env file example](./src/media/docs/env_file_example.txt)
 
 ## Usage
 As this is just a back-end part of the project, you can only test the app's end-points using one of the API clients like Insomnia or Postman. Please follow the steps in this document: [Usage info docs](./src/media/docs/usage_info.pdf) to get started (I'm using Insomnia in my presentation).

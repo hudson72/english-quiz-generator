@@ -17,9 +17,10 @@ import {
 } from "../interfaces/quizzes";
 import {QuizzesService} from "./quizzes.service";
 import {AuthGuard} from "@nestjs/passport";
-import {AddNewQuizDto} from "./dto/AddNewQuizDto";
+import {AddNewQuizDto} from "./dto/add-new-quiz.dto";
 import {UserObj} from "../decorators/user-obj.decorator";
 import {Users} from "../users/users.entity";
+import {UpdateQuizDto} from "./dto/update-quiz.dto";
 
 @Controller('quizzes')
 export class QuizzesController {
@@ -27,26 +28,26 @@ export class QuizzesController {
     constructor(
        @Inject(QuizzesService) private quizzesService: QuizzesService,
     ) {
-    }
+    };
 
     @Get('/:id')
     oneQuiz(
         @Param('id', ParseIntPipe) id: number,
     ): Promise<GetOneQuizResponse> {
         return this.quizzesService.findOneQuiz(id);
-    }
+    };
 
     @Get('/user/:id')
     allQuizzesByUser(
         @Param('id') id: string,
     ): Promise<AllQuizzesByUser> {
         return this.quizzesService.getAllQuizzesByUser(id);
-    }
+    };
 
     @Get('/')
     allQuizzes(): Promise<GetAllQuizzesResponse> {
         return this.quizzesService.getAllQuizzes();
-    }
+    };
 
     @Post('/')
     @UseGuards(AuthGuard('jwt'))
@@ -55,7 +56,7 @@ export class QuizzesController {
         @UserObj() user: Users,
     ): Promise<AddNewQuizResponse> {
         return this.quizzesService.add(newQuiz, user);
-    }
+    };
 
     @Delete('/:id')
     @UseGuards(AuthGuard('jwt'))
@@ -63,14 +64,14 @@ export class QuizzesController {
         @Param('id', ParseIntPipe) id: number,
     ): Promise<DeleteQuizResponse> {
         return this.quizzesService.delete(id);
-    }
+    };
 
-    @Patch('/:id/:totalQuestions')
+    @Patch('/:id')
     @UseGuards(AuthGuard('jwt'))
     updateQuiz(
         @Param('id', ParseIntPipe) id: number,
-        @Param('totalQuestions', ParseIntPipe) totalQuestions: number,
+        @Body() updateQuizDto: UpdateQuizDto
     ): Promise<UpdatedQuizResponse> {
-        return this.quizzesService.update(id, totalQuestions)
-    }
+        return this.quizzesService.update(id, updateQuizDto)
+    };
 }

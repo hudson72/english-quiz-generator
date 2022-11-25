@@ -6,27 +6,29 @@ import { QuizzesModule } from './quizzes/quizzes.module';
 import { QuestionsModule } from './questions/questions.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import {ConfigModule} from "@nestjs/config";
 
 @Module({
   controllers: [AppController],
   providers: [AppService],
   imports: [
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '',
-      database: 'english_quiz_generator',
-      entities: ["dist/**/**.entity{.ts,.js}"],
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      entities: ['dist/**/**.entity{.ts,.js}'],
       bigNumberStrings: false,
       logging: true,
       synchronize: true,
     }),
-      QuizzesModule,
-      QuestionsModule,
-      UsersModule,
-      AuthModule,
+    QuizzesModule,
+    QuestionsModule,
+    UsersModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

@@ -8,7 +8,8 @@ import {Quizzes} from "./quizzes.entity";
 import {DataSource} from "typeorm";
 import {UsersService} from "../users/users.service";
 import {Users} from "../users/users.entity";
-import {AddNewQuizDto} from "./dto/AddNewQuizDto";
+import {AddNewQuizDto} from "./dto/add-new-quiz.dto";
+import {UpdateQuizDto} from "./dto/update-quiz.dto";
 
 @Injectable()
 export class QuizzesService {
@@ -17,38 +18,30 @@ export class QuizzesService {
         @Inject(DataSource) private dataSource: DataSource,
         @Inject(UsersService) private usersService: UsersService,
     ) {
-    }
+    };
 
     filter(quiz: Quizzes): AddNewQuizResponse {
         const {quizName, totalQuestions} = quiz;
         return {quizName, totalQuestions};
-    }
+    };
 
     async getAllQuizzes(): Promise<GetAllQuizzesResponse> {
         return await Quizzes.find();
-    }
+    };
 
     async add(newQuiz: AddNewQuizDto, user: Users): Promise<AddNewQuizResponse> {
-
+    const {quizName, totalQuestions} = newQuiz;
      const quiz = new Quizzes();
-     quiz.quizName = newQuiz.quizName;
-     quiz.totalQuestions = newQuiz.totalQuestions;
+     quiz.quizName = quizName;
+     quiz.totalQuestions = totalQuestions;
 
-     if (newQuiz.quizName === 'undefined' || typeof newQuiz.quizName !== 'string') {
-         throw new HttpException(`Please provide a 'quizName'! It must be a string!`, 400);
-     } else if (newQuiz.totalQuestions <= 0 || typeof newQuiz.totalQuestions !== 'number' ) {
-         throw new HttpException(`Please provide a 'totalQuestions'! It must be a number greater than 0!`, 400);
-     }
+     if (await Quizzes.findOne({where: {quizName}})) throw new HttpException(`Sorry, quizName: '${quizName}' already exists! Please provide a new quizName.`, 400);
 
-        if (await Quizzes.findOne({where: {quizName: newQuiz.quizName}})) {
-            throw new HttpException(`Sorry, quizName: '${newQuiz.quizName}' already exists! Please provide a new quizName.`, 400);
-        } else {
-            quiz.users = user;
-            await quiz.save();
+     quiz.users = user;
+     await quiz.save();
 
-            return this.filter(quiz);
-        }
-    }
+     return this.filter(quiz);
+    };
 
     async findOneQuiz(id: number): Promise<GetOneQuizResponse> {
         if (!await Quizzes.findOne({where: {id}})) {
@@ -56,7 +49,7 @@ export class QuizzesService {
         } else {
             return await Quizzes.findOne({where: {id}})
         }
-    }
+    };
 
     async getAllQuizzesByUser(id: string): Promise<AllQuizzesByUser> {
         if (!await Users.findOne({where: {id}})) {
@@ -78,8 +71,8 @@ export class QuizzesService {
         return {
             quizzesByUser,
             totalQuizzes,
-        }
-    }
+        };
+    };
 
     async delete(id: number): Promise<DeleteQuizResponse> {
 
@@ -92,20 +85,21 @@ export class QuizzesService {
         } else {
             throw new HttpException(`Sorry, quiz with ID: '${id}' doesn't exist!`, 404);
         }
-    }
-        async update(id: number, totalQuestions: number): Promise<UpdatedQuizResponse> {
+    };
+        async update(id: number, updateQuizDto: UpdateQuizDto): Promise<UpdatedQuizResponse> {
+        const {quizName, totalQuestions} = updateQuizDto;
             const quizToUpdate = await Quizzes.findOne({where: {id}});
-            if (!quizToUpdate) {
-                throw new HttpException(`Sorry, quiz with ID: '${id}' doesn't exist!`, 404);
-            } else if (totalQuestions === quizToUpdate.totalQuestions) {
-                throw new HttpException(`Sorry, the given 'totalQuestions' and the existing one are the same: '${totalQuestions}'!`, 400);
-            } else {
-                await Quizzes.update(id, {totalQuestions});
-            }
+            if (!quizToUpdate) throw new HttpException(`Sorry, quiz with ID: '${id}' doesn't exist!`, 404);
+            if (!quizName && !totalQuestions) throw new HttpException(`Sorry, incorrect or missing data for update! Please provide a new value for at least one of the following keys: 'quizName', 'totalQuestions'.`, 400);
+            if (totalQuestions === quizToUpdate.totalQuestions) throw new HttpException(`Sorry, the given 'totalQuestions' and the existing one are the same: '${totalQuestions}'!`, 400);
+            if (quizName === quizToUpdate.quizName) throw new HttpException(`Sorry, the given 'quizName' and the existing one are the same: '${quizName}'!`, 400);
+
+            await Quizzes.update(id, updateQuizDto);
+
             return {
                 isSuccessful: true,
-                message: `Quiz with ID: '${id}' has been updated with new 'totalQuestions': '${totalQuestions}'.`,
-            }
-        }
+                message: `Quiz with ID: '${id}' has been updated.`,
+            };
+        };
     }
 

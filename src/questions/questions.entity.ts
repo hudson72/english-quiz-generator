@@ -25,7 +25,7 @@ export class Questions extends BaseEntity implements Question {
     d: string;
 
     @Column({
-        length: 2,
+        length: 1,
     })
     correct: string;
 }

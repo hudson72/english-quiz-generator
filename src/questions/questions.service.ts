@@ -8,7 +8,8 @@ import {
 } from "../interfaces/questions";
 import {Questions} from "./questions.entity";
 import {DataSource} from "typeorm";
-import {AddNewQuestionDto} from "./dto/AddNewQuestionDto";
+import {AddNewQuestionDto} from "./dto/add-new-question.dto";
+import {UpdateQuestionDto} from "./dto/update-question.dto";
 
 @Injectable()
 export class QuestionsService {
@@ -16,7 +17,7 @@ export class QuestionsService {
     constructor(
         @Inject(DataSource) private dataSource: DataSource,
     ) {
-    }
+    };
 
     async getAllQuestions(): Promise<AllQuestions> {
 
@@ -31,8 +32,8 @@ export class QuestionsService {
         return {
             allQuestions,
             totalQuestions,
-        }
-    }
+        };
+    };
 
     async getOneQuizQuestions(questionCategory: string): Promise<OneQuizQuestions> {
         if (!await Questions.findOne({where: {questionCategory}})) {
@@ -52,16 +53,16 @@ export class QuestionsService {
                 quizQuestions,
                 totalQuestions,
             }
-        }
+        };
 
     async findOneQuestion(id: number): Promise<GetOneQuestionResponse> {
         const oneQuestion = await Questions.findOne({where: {id}});
         if (!oneQuestion) {
             throw new HttpException(`Question with ID: '${id}' doesn't exist!`, 404);
         } else {
-            return oneQuestion
+            return oneQuestion;
         }
-    }
+    };
 
     async add(newQuestion: AddNewQuestionDto): Promise<AddNewQuestionResponse> {
 
@@ -84,7 +85,7 @@ export class QuestionsService {
            await newQuestionObj.save();
            return newQuestionObj;
        }
-    }
+    };
 
     async delete(id: number): Promise<DeleteQuestionResponse> {
         if (await Questions.findOne({where: {id}})) {
@@ -96,7 +97,7 @@ export class QuestionsService {
         } else {
             throw new HttpException(`Question with the given ID: '${id}' doesn't exist!`, 404);
         }
-    }
+    };
 
     async getAnswerFeedback(id: number, answer: string): Promise<GetAnswerFeedbackResponse> {
         const result = await Questions.findOne({where: {id}});
@@ -106,31 +107,27 @@ export class QuestionsService {
         } else if (result.correct === answer) {
             return {
                 isSuccessful: true,
-                message: `Well done! Correct answer is '${answer}'.`
+                message: `Well done! The correct answer is '${answer}'.`
             }
         } else {
             return {
                 isSuccessful: false,
                 message: `Sorry! The answer '${answer}' is incorrect!`
-            }
+            };
         }
-    }
+    };
 
-    async update(id: number): Promise<UpdatedQuestionResponse> {
+    async update(id: number, updateQuestionDto: UpdateQuestionDto): Promise<UpdatedQuestionResponse> {
+        const {questionCategory, question, a, b, c, d, correct} = updateQuestionDto;
         const questionToUpdate = await Questions.findOne({where: {id}});
-        if (!questionToUpdate) {
-            throw new HttpException(`Question with the given ID: '${id}' doesn't exist!`, 404);
-        } else {
-            await this.dataSource
-                .createQueryBuilder()
-                .update(Questions)
-                .set({question: 'Synonym of bald', correct: 'b'})
-                .where('id = :id', {id})
-                .execute()
-        }
+
+        if (!questionToUpdate) throw new HttpException(`Question with the given ID: '${id}' doesn't exist!`, 404);
+        if (!questionCategory && !question && !a && !b && !c && !d && !correct) throw new HttpException(`Sorry, incorrect or missing data for update! Please provide a new value for at least one of the following keys: 'questionCategory', 'question', 'a', 'b', 'c', 'd', 'correct'.`, 400);
+
+        await Questions.update(id, updateQuestionDto);
         return {
             isSuccessful: true,
             message: `Question wit ID: '${id}' has been updated.`
-        }
-    }
+        };
+    };
 }

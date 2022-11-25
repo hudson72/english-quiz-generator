@@ -5,7 +5,8 @@ export interface RegisterUser {
 
 export type GetAllUsersResponse = RegisterUser[];
 
-export type RegisterUserResponse = RegisterUser | {
+export type RegisterUserResponse = RegisterUser
+    | {
     isSuccessful: false;
     message: string;
 }

@@ -1,4 +1,16 @@
-import {Body, Controller, Delete, Get, Inject, Param, Patch, Post, UseGuards} from '@nestjs/common';
+import {
+    Body,
+    ClassSerializerInterceptor,
+    Controller,
+    Delete,
+    Get,
+    Inject,
+    Param,
+    Patch,
+    Post,
+    UseGuards,
+    UseInterceptors, UsePipes, ValidationPipe
+} from '@nestjs/common';
 import {
     DeleteUserResponse,
     GetAllUsersResponse,
@@ -16,14 +28,14 @@ export class UsersController {
     constructor(
         @Inject(UsersService) private usersService: UsersService,
     ) {
-    }
+    };
 
     @Post('/register')
     register(
         @Body() newUser: RegisterDto,
     ): Promise<RegisterUserResponse>{
         return this.usersService.register(newUser);
-    }
+    };
 
     @Get('/:userId')
     @UseGuards(AdminPasswordGuard)
@@ -31,13 +43,13 @@ export class UsersController {
         @Param('userId') userId: string
     ): Promise<GetUserResponse> {
         return this.usersService.getUser(userId)
-    }
+    };
 
     @Get('/')
     @UseGuards(AdminPasswordGuard)
     allUsers(): Promise<GetAllUsersResponse> {
         return this.usersService.getAllUsers()
-    }
+    };
 
     @Get('/quizzes/:userId')
     @UseGuards(AdminPasswordGuard)
@@ -45,13 +57,13 @@ export class UsersController {
         @Param('userId') userId: string
     ): Promise<GetUserResponse> {
         return this.usersService.getUserAndQuizzes(userId)
-    }
+    };
 
     @Get('/all/quizzes')
     @UseGuards(AdminPasswordGuard)
     allUsersAndQuizzes(): Promise<GetAllUsersResponse> {
         return this.usersService.getAllUsersAndQuizzes()
-    }
+    };
 
     @Patch('/:id/:email')
     @UseGuards(AdminPasswordGuard)
@@ -60,7 +72,7 @@ export class UsersController {
         @Param('email') email: string,
     ): Promise<UpdatedUserResponse> {
         return this.usersService.update(id, email)
-    }
+    };
 
     @Delete('/:id')
     @UseGuards(AdminPasswordGuard)
@@ -68,5 +80,5 @@ export class UsersController {
         @Param('id') id: string,
     ): Promise<DeleteUserResponse> {
         return this.usersService.delete(id);
-    }
+    };
 }
