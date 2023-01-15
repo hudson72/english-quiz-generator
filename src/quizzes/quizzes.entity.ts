@@ -1,18 +1,25 @@
-import {BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
-import {Users} from "../users/users.entity";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Users } from '../users/users.entity';
 
 @Entity()
 export class Quizzes extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    quizName: string;
+  @Column()
+  quizName: string;
 
-    @Column()
-    totalQuestions: number;
+  @Column()
+  totalQuestions: number;
 
-    @ManyToOne(type => Users, entity => entity.quizzes)
-    @JoinColumn()
-    users: Users;
+  @ManyToOne((type) => Users, (entity) => entity.quizzes)
+  @JoinColumn()
+  users: Users;
 }
